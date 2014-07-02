@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Mosquitto Websockets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="mqttws31.js" type="text/javascript"></script>
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script src="config.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    var client = new Messaging.Client(
+                        websocketserver,
+                        websocketport,
+                        "web_" + parseInt(Math.random() * 100,
+                        10));
+
+    client.onConnectionLost = function (responseObject) {
+        $('#status').val("connection lost: " + responseObject.errorMessage);
+
+    };
+
+    client.onMessageArrived = function (message) {
+        var topic = message.destinationName;
+        var payload = message.payloadString;
+
+        $('#ws').prepend('<li>' + topic + ' = ' + payload + '</li>');
+    };
+
+    var options = {
+        timeout: 3,
+        useSSL: useTLS,
+        onSuccess: function () {
+            $('#status').val('Connected to ' + websocketserver + ':' + websocketport);
+            // Connection succeeded; subscribe to our topic
+            client.subscribe(topic, {qos: 0});
+            $('#topic').val(topic);
+
+        },
+        onFailure: function (message) {
+            $('#status').val("Connection failed: " + message.errorMessage);
+
+        }
+    };
+
+    function init() {
+        /* Connect to MQTT broker */
+        if (username != null) {
+            options.userName = username;
+            options.password = password;
+        }
+        console.log("TLS = " + useTLS + " username=" + username + " password=" + password);
+        client.connect(options);
+    }
+
+    $(document).ready(function() {
+        init();
+    });
+
+    </script>
+  </head>
+  <body>
+    <h1>Mosquitto Websockets</h1>
+    <div>
+        Subscribed to <input type='text' id='topic' /> Status: <input type='text' id='status' size="80" />
+        <h3>Messages</h3>
+
+        <ul id='ws' style="font-family: 'Courier New', Courier, monospace;">
+        </ul>
+    </div>
+
+      </div>
+  </body>
+</html>

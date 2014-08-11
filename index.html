@@ -14,8 +14,8 @@
 
     function MQTTconnect() {
         mqtt = new Messaging.Client(
-                        config.host,
-                        config.port,
+                        host,
+                        port,
                         "web_" + parseInt(Math.random() * 100,
                         10));
         var options = {
@@ -36,12 +36,12 @@
             options.userName = username;
             options.password = password;
         }
-        console.log("Host="+ config.host + ", port=" + config.port + " TLS = " + useTLS + " username=" + username + " password=" + password);
+        console.log("Host="+ host + ", port=" + port + " TLS = " + useTLS + " username=" + username + " password=" + password);
         mqtt.connect(options);
     }
 
     function onConnect() {
-        $('#status').val('Connected to ' + config.host + ':' + config.port);
+        $('#status').val('Connected to ' + host + ':' + port);
         // Connection succeeded; subscribe to our topic
         mqtt.subscribe(topic, {qos: 0});
         $('#topic').val(topic);

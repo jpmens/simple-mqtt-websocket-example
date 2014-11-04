@@ -13,7 +13,7 @@
     var reconnectTimeout = 2000;
 
     function MQTTconnect() {
-        mqtt = new Messaging.Client(
+        mqtt = new Paho.MQTT.Client(
                         host,
                         port,
                         "web_" + parseInt(Math.random() * 100,

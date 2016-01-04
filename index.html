@@ -13,11 +13,15 @@
     var reconnectTimeout = 2000;
 
     function MQTTconnect() {
-        mqtt = new Paho.MQTT.Client(
-                        host,
-                        port,
-                        "web_" + parseInt(Math.random() * 100,
-                        10));
+	if (typeof path == "undefined") {
+		path = '/mqtt';
+	}
+	mqtt = new Paho.MQTT.Client(
+			host,
+			port,
+			path,
+			"web_" + parseInt(Math.random() * 100, 10)
+	);
         var options = {
             timeout: 3,
             useSSL: useTLS,
@@ -36,12 +40,12 @@
             options.userName = username;
             options.password = password;
         }
-        console.log("Host="+ host + ", port=" + port + " TLS = " + useTLS + " username=" + username + " password=" + password);
+        console.log("Host="+ host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
         mqtt.connect(options);
     }
 
     function onConnect() {
-        $('#status').val('Connected to ' + host + ':' + port);
+        $('#status').val('Connected to ' + host + ':' + port + path);
         // Connection succeeded; subscribe to our topic
         mqtt.subscribe(topic, {qos: 0});
         $('#topic').val(topic);
